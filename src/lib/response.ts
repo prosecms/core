@@ -42,3 +42,8 @@ export default class ResponseDTO {
     return new ResponseDTO().text(data);
   }
 }
+
+export type ResponseWithData<T> = {
+  result: true;
+  data: T;
+};

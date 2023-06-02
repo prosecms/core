@@ -5,14 +5,18 @@ import { getServerSession } from "next-auth";
 import authOptions from "lib/auth";
 import { prisma } from "lib/prisma";
 
-import EditorProvider from "components/EditorProvider";
 import Header from "components/Header";
+import Editor from "./Editor";
+import Providers from "./Providers";
 
 type Props = {
   params: {
     id: string;
   };
 };
+
+// FIXME: The side menu (drag handle) shows even when the publishSheet is open
+//        Will be fixed with https://github.com/TypeCellOS/BlockNote/issues/230
 
 export default async function AdminDraftPage({ params: { id } }: Props) {
   const session = await getServerSession(authOptions);
@@ -27,10 +31,22 @@ export default async function AdminDraftPage({ params: { id } }: Props) {
     take: 1,
   });
 
+  const post = await prisma.post.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!post) {
+    redirect(`${process.env.BASE_URL}/admin/drafts`);
+  }
+
   return (
-    <main className="container mx-auto">
-      <Header session={session} config={config} />
-      <EditorProvider id={id} />
-    </main>
+    <Providers post={post}>
+      <main className="relative z-0 container mx-auto flex flex-col">
+        <Header session={session} config={config} />
+        <Editor post={post} />
+      </main>
+    </Providers>
   );
 }

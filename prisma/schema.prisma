@@ -23,6 +23,7 @@ model Post {
   title       String
   description String
   content     String
+  slug        String?   @unique
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @default(now()) @updatedAt
   deletedAt   DateTime?

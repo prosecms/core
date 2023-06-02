@@ -10,13 +10,13 @@ import {
 
 import { defaultBlockSchema } from "@blocknote/core";
 
+import { CalloutBlock, CalloutCommand } from "./CalloutBlock";
 import { CodeBlock, CodeCommand } from "./CodeBlock";
 import { ImageBlock, ImageCommand } from "./ImageBlock";
 
 import useDynamicTextarea from "lib/useDynamicTextarea";
 
 import "@blocknote/core/style.css";
-import { CalloutBlock, CalloutCommand } from "./CalloutBlock";
 
 type Props = {
   title: string;
@@ -25,6 +25,8 @@ type Props = {
   setDescription: (description: string) => void;
   content: string;
   setContent: (content: string) => void;
+  save: () => void;
+  disabled?: boolean;
 };
 
 export default function Editor({
@@ -34,6 +36,8 @@ export default function Editor({
   setDescription,
   content,
   setContent,
+  save,
+  disabled,
 }: Props) {
   const contentEditor = useBlockNote({
     blockSchema: {
@@ -50,8 +54,9 @@ export default function Editor({
     ],
     initialContent: JSON.parse(content || "[]"),
     onEditorContentChange: (editor) => {
-      setContent(JSON.stringify(editor._tiptapEditor.getJSON()));
+      setContent(JSON.stringify(editor.topLevelBlocks));
     },
+    editable: !disabled,
   });
 
   const titleRef = useRef<HTMLTextAreaElement>(null);
@@ -61,16 +66,30 @@ export default function Editor({
   useDynamicTextarea(descriptionRef.current, description);
 
   return (
-    <div>
+    <div className="flex-1 overflow-y-auto">
       <textarea
         ref={titleRef}
         onChange={(e) => setTitle(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+          }
+        }}
+        onBlur={save}
+        value={title}
         placeholder="Untitled"
         className="w-full h-0 text-6xl font-bold leading-snug px-[50px] mt-6 focus:outline-none break-keep whitespace-pre-wrap resize-none placeholder-[#ccc]"
       />
       <textarea
         ref={descriptionRef}
         onChange={(e) => setDescription(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+          }
+        }}
+        onBlur={save}
+        value={description}
         placeholder="Enter description here..."
         className="w-full h-0 text-xl px-[50px] my-3 focus:outline-none break-keep whitespace-pre-wrap resize-none placeholder-[#ccc]"
       />

@@ -25,7 +25,7 @@ export default function Header({ session, config }: Props) {
   return (
     <header className="flex flex-col md:flex-row items-center p-6 shadow-sm">
       <a
-        href="/"
+        href="/admin"
         className="text-2xl font-bold text-center break-keep md:text-left"
       >
         {name || "Prose CMS"} Admin
