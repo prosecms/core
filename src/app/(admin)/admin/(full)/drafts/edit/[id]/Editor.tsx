@@ -22,7 +22,7 @@ export default function Editor({ post }: Props) {
   const [content, setContent] = useState<string>(post.content);
 
   const savePost = async () => {
-    await axios.post(`/api/admin/posts`, {
+    await axios.post("/api/admin/posts", {
       id: post.id,
       title,
       description,
@@ -53,6 +53,7 @@ export default function Editor({ post }: Props) {
         </a>
         <div className="flex-1" />
         <button
+          type="button"
           className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-md"
           onClick={savePost}
         >
@@ -60,6 +61,7 @@ export default function Editor({ post }: Props) {
         </button>
         <div className="w-3 h-3" />
         <button
+          type="button"
           className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md"
           onClick={async () => {
             await savePost();

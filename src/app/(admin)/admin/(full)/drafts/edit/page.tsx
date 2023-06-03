@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function NoPage() {
-  redirect(`${process.env.BASE_URL}/admin/drafts`);
+	redirect(`${process.env.BASE_URL}/admin/drafts`);
 }

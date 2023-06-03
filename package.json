@@ -46,6 +46,7 @@
     "@types/zxcvbn": "^4.4.1",
     "dotenv-cli": "^7.2.1",
     "drizzle-kit": "^0.18.1",
-    "prisma": "^4.15.0"
+    "prisma": "^4.15.0",
+    "rome": "^12.1.3"
   }
 }
