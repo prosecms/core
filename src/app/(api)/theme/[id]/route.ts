@@ -1,5 +1,4 @@
 import mime from "mime-types";
-import validator from "validator";
 
 import { readLocal, readS3 } from "lib/file";
 import { prisma } from "lib/prisma";
@@ -7,20 +6,23 @@ import ResponseDTO from "lib/response";
 import { Config } from "types/config";
 
 export async function GET(req: Request) {
-  const filename = req.url.split("/").pop();
+  const url = new URL(req.url);
+  const filenameRaw = url.pathname.split("/").pop();
 
-  if (!filename || !validator.isUUID(filename.split(".")[0])) {
-    return ResponseDTO.status(400).json({
-      result: false,
-      error: {
-        title: "Bad Request",
-        message: "The request has no ID.",
+  if (!filenameRaw) {
+    return {
+      status: 400,
+      body: {
+        message: "Invalid request",
       },
-    });
+    };
   }
 
-  const mimeType = mime.contentType(filename);
+  const filename = filenameRaw.includes(".")
+    ? filenameRaw
+    : `${filenameRaw}.hbs`;
 
+  const mimeType = mime.contentType(filename);
   if (!mimeType) {
     return ResponseDTO.status(500).json({
       result: false,
@@ -40,7 +42,7 @@ export async function GET(req: Request) {
 
   if (!configString) {
     try {
-      const content = await readLocal("images", filename, {
+      const content = await readLocal("theme", filename, {
         name: "local",
         basePath: "data",
       });
@@ -56,16 +58,16 @@ export async function GET(req: Request) {
         result: false,
         error: {
           title: "Not Found",
-          message: "Couldn't find the image.",
+          message: "Couldn't find the theme file.",
         },
       });
     }
   }
 
   const config = JSON.parse(configString.config) as Config;
-  if (config.image.driver.name === "local") {
+  if (config.theme.driver.name === "local") {
     try {
-      const content = await readLocal("images", filename, config.image.driver);
+      const content = await readLocal("", filename, config.theme.driver);
       return new Response(content, {
         status: 200,
         headers: {
@@ -78,20 +80,20 @@ export async function GET(req: Request) {
         result: false,
         error: {
           title: "Not Found",
-          message: "Couldn't find the image.",
+          message: "Couldn't find the theme file.",
         },
       });
     }
-  } else if (config.image.driver.name === "s3") {
+  } else if (config.theme.driver.name === "s3") {
     try {
-      const s3Body = await readS3("images", filename, config.image.driver);
+      const s3Body = await readS3("", filename, config.theme.driver);
 
       if (!s3Body) {
         return ResponseDTO.status(404).json({
           result: false,
           error: {
             title: "Not Found",
-            message: "Couldn't find the image.",
+            message: "Couldn't find the theme file.",
           },
         });
       }
@@ -110,7 +112,7 @@ export async function GET(req: Request) {
         result: false,
         error: {
           title: "Not Found",
-          message: "Couldn't find the image.",
+          message: "Couldn't find the theme file.",
         },
       });
     }
