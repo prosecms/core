@@ -13,11 +13,11 @@ import { defaultBlockSchema } from "@blocknote/core";
 import { CalloutBlock, CalloutCommand } from "./CalloutBlock";
 import { CodeBlock, CodeCommand } from "./CodeBlock";
 import { ImageBlock, ImageCommand } from "./ImageBlock";
+import { BookmarkBlock, BookmarkCommand } from "./BookmarkBlock";
 
 import useDynamicTextarea from "lib/useDynamicTextarea";
 
 import "@blocknote/core/style.css";
-import { BookmarkBlock, BookmarkCommand } from "./BookmarkBlock";
 
 type Props = {
   title: string;
@@ -58,6 +58,7 @@ export default function Editor({
     initialContent: JSON.parse(content || "[]"),
     onEditorContentChange: async (editor) => {
       setContent(JSON.stringify(editor.topLevelBlocks));
+      console.log(await editor.blocksToHTML(editor.topLevelBlocks));
     },
     editable: !disabled,
   });

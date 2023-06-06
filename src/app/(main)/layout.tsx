@@ -1,31 +1,27 @@
-import React, { PropsWithChildren } from "react";
+import { PropsWithChildren } from "react";
+
+import { getConfig } from "lib/config";
+import ClientLayout from "./ClientLayout";
 
 import "styles/globals.css";
 
-export const metadata = {};
-
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const headResponse = await fetch(`${process.env.BASE_URL}/theme/head.json`);
-  let head: { tag: string; [key: string]: string }[] = [];
-  if (headResponse.ok) {
-    const headData = await headResponse.json();
-    if (headData && Array.isArray(headData)) {
-      head = headData;
-    }
-  }
-
-  const headElements = head.map((item, index) => {
-    const { tag, ...props } = item;
-    return React.createElement(tag, {
-      ...props,
-      key: `head-${index}`,
-    });
-  });
+  const config = await getConfig();
 
   return (
     <html lang="en" className="w-full h-full">
-      <head>{headElements}</head>
-      <body className="w-full h-full overflow-auto">{children}</body>
+      <body className="w-full h-full overflow-auto">
+        <ClientLayout config={config}>{children}</ClientLayout>
+      </body>
     </html>
   );
+}
+
+export async function generateMetadata() {
+  const config = await getConfig();
+
+  return {
+    title: config.metadata.name,
+    description: config.metadata.description,
+  };
 }

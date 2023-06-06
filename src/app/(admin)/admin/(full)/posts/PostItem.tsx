@@ -19,7 +19,8 @@ export default function PostItem({ post }: Props) {
       <p className="font-bold">{post.title || "Untitled"}</p>
       <p className="text-sm text-gray-500">
         {/* post.publishedAt will never be null */}
-        Published At {post.publishedAt?.toLocaleString() || ""}
+        Published At{" "}
+        {post.publishedAt?.toLocaleString("en-US", { dateStyle: "long" }) || ""}
       </p>
     </div>
   );

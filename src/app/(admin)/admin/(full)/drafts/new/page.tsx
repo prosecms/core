@@ -8,28 +8,26 @@ import authOptions from "lib/auth";
 import { prisma } from "lib/prisma";
 
 export default async function AdminDraftPage() {
-	const session = await getServerSession(authOptions);
-	if (!session) {
-		redirect(`${process.env.BASE_URL}/admin/login`);
-	}
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    redirect(`${process.env.BASE_URL}/admin/login`);
+  }
 
-	const uuid = crypto.randomUUID();
+  const uuid = crypto.randomUUID();
 
-	console.log(session);
+  await prisma.post.create({
+    data: {
+      id: uuid,
+      title: "",
+      description: "",
+      content: "[]",
+      author: {
+        connect: {
+          id: session.user.id,
+        },
+      },
+    },
+  });
 
-	await prisma.post.create({
-		data: {
-			id: uuid,
-			title: "",
-			description: "",
-			content: "[]",
-			author: {
-				connect: {
-					id: session.user.id,
-				},
-			},
-		},
-	});
-
-	redirect(`${process.env.BASE_URL}/admin/drafts/edit/${uuid}`);
+  redirect(`${process.env.BASE_URL}/admin/drafts/edit/${uuid}`);
 }

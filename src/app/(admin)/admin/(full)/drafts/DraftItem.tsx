@@ -18,7 +18,8 @@ export default function DraftItem({ draft }: Props) {
     >
       <p className="font-bold">{draft.title || "Untitled"}</p>
       <p className="text-sm text-gray-500">
-        Created at {draft.createdAt.toLocaleString()}
+        Created at{" "}
+        {draft.createdAt.toLocaleString("en-US", { dateStyle: "long" })}
       </p>
     </div>
   );
